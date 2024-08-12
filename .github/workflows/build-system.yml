@@ -1,0 +1,46 @@
+name: Sistema de Construção
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout do código
+      uses: actions/checkout@v3
+
+    - name: Configurar Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '16.x'
+
+    - name: Instalar dependências
+      run: npm install
+
+    - name: Construir projeto
+      run: npm run build
+
+    - name: Executar testes
+      run: npm test
+
+    - name: Gerar relatórios
+      run: |
+        mkdir -p reports
+        echo "Relatório de teste" > reports/test-report.txt
+
+    - name: Gerar documentação
+      run: npm run docs
+
+    - name: Upload de artefatos
+      uses: actions/upload-artifact@v3
+      with:
+        name: build-artifacts
+        path: |
+          reports/
+          dist/
+          docs/
